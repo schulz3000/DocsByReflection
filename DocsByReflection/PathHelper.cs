@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using HelperSharp;
+using System.Runtime.InteropServices;
 
 namespace DocsByReflection
 {
@@ -17,8 +17,8 @@ namespace DocsByReflection
 		/// <param name="assemblyCodeBase">Assemby code base.</param>
 		public static string GetAssemblyDocFileNameFromCodeBase(string assemblyCodeBase)
 		{
-			if (String.IsNullOrWhiteSpace (assemblyCodeBase)) {
-				throw new ArgumentNullException ("assemblyCodeBase");
+			if (String.IsNullOrEmpty (assemblyCodeBase)) {
+				throw new ArgumentNullException (nameof(assemblyCodeBase));
 			}
 
 			var prefix = "file:///";
@@ -26,7 +26,9 @@ namespace DocsByReflection
 			if (assemblyCodeBase.StartsWith (prefix, StringComparison.OrdinalIgnoreCase)) {
 				var filePath = assemblyCodeBase.Substring (prefix.Length);
 
-				if (Environment.OSVersion.Platform == PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Unix) {
+                //RuntimeInformation
+
+                if (!IsWindows) {
 					filePath = "/" + filePath;
 				}
 
@@ -34,9 +36,22 @@ namespace DocsByReflection
 			}
 			else
 			{
-				throw new DocsByReflectionException("Could not ascertain assembly filename from assembly code base '{0}'.".With(assemblyCodeBase));
+				throw new DocsByReflectionException("Could not ascertain assembly filename from assembly code base '{0}'.",assemblyCodeBase);
 			}
 		}
-		#endregion
-	}
+
+        static bool IsWindows
+        {
+            get
+            {
+#if COREFX
+                return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+#else
+            return !(Environment.OSVersion.Platform== PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Unix);
+#endif
+            }
+        }
+
+        #endregion
+    }
 }

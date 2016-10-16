@@ -1,13 +1,15 @@
-version: 1.0.12.{build}
+version: 1.0.13.{build}
 os: Visual Studio 2015
 configuration: CI
-
+environment:
+  # Don't report back to the mothership
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
 nuget:
   account_feed: true
   project_feed: true
 
 before_build:
-- cmd: nuget restore DocsByReflection.sln
+- cmd: dotnet restore
 
 build:
   project: DocsByReflection.sln
@@ -15,9 +17,12 @@ build:
 
 after_build:
 - cmd: >-
+
+    dotnet test ./DocsByReflection.UnitTests
+
     mkdir .\src\nuget
 
-    nuget pack .\DocsByReflection\DocsByReflection.csproj -IncludeReferencedProjects -Version %APPVEYOR_BUILD_VERSION% -OutputDirectory .\nuget
+    dotnet pack .\DocsByReflection --version-suffix=%APPVEYOR_BUILD_NUMBER% --output .\nuget
 
 artifacts:
   - path: .\nuget\*.nupkg

@@ -1,0 +1,16 @@
+﻿{
+  "version": "1.0.0", 
+
+  "buildOptions": {
+    "xmlDoc": true,
+    "keyFile": "DocsByReflection.snk"
+  },
+  "dependencies": {
+    "NETStandard.Library": "1.6.0"
+  },
+  "frameworks": {
+    "netstandard1.0": {
+      "imports": "dnxcore50"
+    }
+  }
+}

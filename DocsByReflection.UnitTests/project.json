@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+
+  "buildOptions": {
+    "xmlDoc": true,
+    "keyFile": "DocsByReflection.snk"
+  }, 
+
+  "dependencies": {
+    "DocsByReflection": "1.0.13.0",
+    "DocsByReflection.UnitTests.Stubs": "1.0.0",
+    "NUnit": "3.5.0",
+    "dotnet-test-nunit": "3.4.0-beta-2",
+    "NETStandard.Library": "1.6.0",
+    "System.Reflection.TypeExtensions": "4.1.0",
+    "System.Xml.XmlDocument": "4.0.1",
+    "System.Xml.XPath.XmlDocument": "4.0.1"
+  },
+
+  "testRunner": "nunit",
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": "portable-net45+win8",
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "version": "1.0.0-*",
+          "type": "platform"
+        }
+      }
+    }
+  }
+}

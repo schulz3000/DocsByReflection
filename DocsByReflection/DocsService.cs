@@ -9,7 +9,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Xml;
-using HelperSharp;
 
 namespace DocsByReflection
 {
@@ -40,7 +39,8 @@ namespace DocsByReflection
         [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode")]
         public static XmlElement GetXmlFromMember(MemberInfo member, bool throwError = true)
         {
-            ExceptionHelper.ThrowIfNull("member", member);
+            if (member == null)
+                throw new ArgumentNullException(nameof(member));
 
             // First character [0] of member type is prefix character in the name in the XML
             return DocsTypeService.GetXmlFromName(member.DeclaringType, member.MemberType.ToString()[0], member.Name, throwError);
@@ -55,7 +55,8 @@ namespace DocsByReflection
         [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode")]
         public static XmlElement GetXmlFromParameter(ParameterInfo parameter, bool throwError = true)
         {
-            ExceptionHelper.ThrowIfNull("parameter", parameter);
+            if (parameter == null)
+                throw new ArgumentNullException(nameof(parameter));
 
             var method = parameter.Member as MethodBase;
             var memberDoc = method == null ? GetXmlFromMember(parameter.Member, throwError) : GetXmlFromMember(method, throwError);

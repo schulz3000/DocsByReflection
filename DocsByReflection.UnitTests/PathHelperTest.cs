@@ -1,47 +1,44 @@
 using System;
 using NUnit.Framework;
-using TestSharp;
+using System.Runtime.InteropServices;
 
 namespace DocsByReflection.UnitTests
 {
-    [TestFixture()]
+    [TestFixture]
     public class PathHelperTest
     {
-        [Test()]
+        [Test]
         public void GetAssemblyDocFileNameFromCodeBase_NullOrEmpty_Exception()
         {
-            ExceptionAssert.IsThrowing(new ArgumentNullException("assemblyCodeBase"), () =>
-            {
-                PathHelper.GetAssemblyDocFileNameFromCodeBase(null);
-            });
+            var ex1 = Assert.Throws<ArgumentNullException>(() => PathHelper.GetAssemblyDocFileNameFromCodeBase(null));
+            Assert.AreEqual("Value cannot be null.\r\nParameter name: assemblyCodeBase", ex1.Message);
 
-            ExceptionAssert.IsThrowing(new ArgumentNullException("assemblyCodeBase"), () =>
-            {
-                PathHelper.GetAssemblyDocFileNameFromCodeBase("");
-            });
+            var ex2 = Assert.Throws<ArgumentNullException>(() => PathHelper.GetAssemblyDocFileNameFromCodeBase(""));
+            Assert.AreEqual("Value cannot be null.\r\nParameter name: assemblyCodeBase", ex2.Message);
         }
 
-        [Test()]
+        [Test]
         public void GetAssemblyDocFileNameFromCodeBase_DoesNotStartWithPrefix_Exception()
         {
-            ExceptionAssert.IsThrowing(new DocsByReflectionException("Could not ascertain assembly filename from assembly code base 'file://notExists'."), () =>
-            {
-                PathHelper.GetAssemblyDocFileNameFromCodeBase("file://notExists");
-            });
+            var ex1 = Assert.Throws<DocsByReflectionException>(() => PathHelper.GetAssemblyDocFileNameFromCodeBase("file://notExists"));
+            Assert.AreEqual("Could not ascertain assembly filename from assembly code base 'file://notExists'.", ex1.Message);
+
+            var ex2 = Assert.Throws<DocsByReflectionException>(() => PathHelper.GetAssemblyDocFileNameFromCodeBase("file://notExists"));
+            Assert.AreEqual("Could not ascertain assembly filename from assembly code base 'file://notExists'.", ex2.Message);
         }
 
-        [Test()]
+        [Test]
         public void GetAssemblyDocFileNameFromCodeBase_RightCodeBase_DocFileName()
         {
             var actual = PathHelper.GetAssemblyDocFileNameFromCodeBase("file:///Users/giacomelli/Dropbox/jogosdaqui/Plataforma/src/jogosdaqui.WebApi/Bin/jogosdaqui.WebApi.dll");
 
-            if (Environment.OSVersion.Platform == PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Unix)
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                Assert.AreEqual("/Users/giacomelli/Dropbox/jogosdaqui/Plataforma/src/jogosdaqui.WebApi/Bin/jogosdaqui.WebApi.xml", actual);
+                Assert.AreEqual("Users/giacomelli/Dropbox/jogosdaqui/Plataforma/src/jogosdaqui.WebApi/Bin/jogosdaqui.WebApi.xml", actual);
             }
             else
             {
-                Assert.AreEqual("Users/giacomelli/Dropbox/jogosdaqui/Plataforma/src/jogosdaqui.WebApi/Bin/jogosdaqui.WebApi.xml", actual);
+                Assert.AreEqual("/Users/giacomelli/Dropbox/jogosdaqui/Plataforma/src/jogosdaqui.WebApi/Bin/jogosdaqui.WebApi.xml", actual);                
             }
         }
     }

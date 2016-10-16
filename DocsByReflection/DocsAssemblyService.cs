@@ -5,7 +5,6 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Xml;
-using HelperSharp;
 
 namespace DocsByReflection
 {
@@ -82,7 +81,8 @@ namespace DocsByReflection
 
             try
             {
-                using (var streamReader = new StreamReader(filePath))
+                using (var fileStream = new FileStream(filePath,FileMode.Open,FileAccess.Read))
+                using (var streamReader = new StreamReader(fileStream))
                 {
                     var xmlDocument = new XmlDocument();
                     xmlDocument.Load(streamReader);
@@ -100,7 +100,7 @@ namespace DocsByReflection
             }
             catch (Exception ex)
             {
-                throw new DocsByReflectionException("Error trying to get documentation filer for assembly code base '{0}'.".With(assembly.CodeBase), ex);
+                throw new DocsByReflectionException(string.Format("Error trying to get documentation filer for assembly code base '{0}'.",assembly.CodeBase), ex);
             }
         }
         #endregion

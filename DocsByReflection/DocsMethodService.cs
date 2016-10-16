@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Xml;
-using HelperSharp;
 namespace DocsByReflection
 {
     /// <summary>
@@ -21,7 +20,8 @@ namespace DocsByReflection
         [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode")]
         public static XmlElement GetXmlFromMember(MethodBase method, bool throwError = true)
         {
-            ExceptionHelper.ThrowIfNull("method", method);
+            if (method == null)
+                throw new ArgumentNullException(nameof(method));
             
             // Calculate the parameter string as this is in the member name in the XML
             var parameters = new List<string>();
@@ -34,7 +34,7 @@ namespace DocsByReflection
             //AL: 15.04.2008 ==> BUG-FIX remove “()” if parametersString is empty
             if (parameters.Count > 0)
             {
-                var result = DocsTypeService.GetXmlFromName(method.DeclaringType, 'M', method.Name + "({0})".With(String.Join(",", parameters)), false);
+                var result = DocsTypeService.GetXmlFromName(method.DeclaringType, 'M', string.Format("{0}({1})", method.Name, String.Join(",", parameters.ToArray())), false);
 
                 // Try a fallback for case where a method with generic parameters is defined on base class.
                 if (result == null)
@@ -43,10 +43,10 @@ namespace DocsByReflection
 
                     for (int i = 1; i <= parameters.Count; i++)
                     {
-                        typedParameters.Add("`{0}".With(i));
+                        typedParameters.Add(string.Format("`{0}",i));
                     }
 
-                    return DocsTypeService.GetXmlFromName(method.DeclaringType, 'M', method.Name + "({0})".With(String.Join(",", typedParameters)), throwError);
+                    return DocsTypeService.GetXmlFromName(method.DeclaringType, 'M', string.Format("{0}({1})", method.Name, String.Join(",", typedParameters.ToArray())), throwError);
                 }
 
                 if (result == null && throwError)

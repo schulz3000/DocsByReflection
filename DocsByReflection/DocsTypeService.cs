@@ -19,7 +19,7 @@ namespace DocsByReflection
         /// <returns>The full name.</returns>
         public static string GetTypeFullNameForXmlDoc(Type type, bool isMethodParameter = false)
         {
-            if (type.MemberType == MemberTypes.TypeInfo && type.IsGenericType && (!type.IsClass || isMethodParameter))
+            if (type.GetTypeInfo().MemberType == MemberTypes.TypeInfo && type.GetTypeInfo().IsGenericType && (!type.GetTypeInfo().IsClass || isMethodParameter))
             {
                 //2016-10-06 by Jeffrey, support multiple generic arguments
                 return String.Format(CultureInfo.InvariantCulture,
@@ -28,7 +28,7 @@ namespace DocsByReflection
                      //type.Name.Replace("`1", ""),
                      System.Text.RegularExpressions.Regex.Replace(type.Name, "`[0-9]+", ""),
                      string.Join(",",
-                         type.GetGenericArguments()
+                         type.GetTypeInfo().GetGenericArguments()
                          .Select(o => GetTypeFullNameForXmlDoc(o)).ToArray()));
                     //GetTypeFullNameForXmlDoc(type.GetGenericArguments().FirstOrDefault()));
             }
@@ -53,7 +53,7 @@ namespace DocsByReflection
         /// <returns>The member that has a name that describes the specified reflection element</returns>
         public static XmlElement GetXmlFromName(Type type, char prefix, string name, bool throwError)
         {
-            string fullName = GetTypeFullNameForXmlDoc(type);
+            var fullName = GetTypeFullNameForXmlDoc(type);
 
             if (String.IsNullOrEmpty(name))
             {
@@ -64,7 +64,7 @@ namespace DocsByReflection
                 fullName = String.Format(CultureInfo.InvariantCulture, "{0}:{1}.{2}", prefix, fullName, name);
             }
 
-            XmlDocument xmlDocument = DocsService.GetXmlFromAssembly(type.Assembly, throwError);
+            var xmlDocument = DocsService.GetXmlFromAssembly(type.GetTypeInfo().Assembly, throwError);
             XmlElement matchedElement = null;
 
             if (xmlDocument != null)
@@ -75,7 +75,7 @@ namespace DocsByReflection
                     {
                         if (matchedElement != null)
                         {
-                            throw new DocsByReflectionException("Multiple matches to query", null);
+                            throw new DocsByReflectionException("Multiple matches to query");
                         }
 
                         matchedElement = xmlElement;

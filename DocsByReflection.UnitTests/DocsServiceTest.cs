@@ -1,6 +1,7 @@
+using System.Reflection;
 using DocsByReflection.UnitTests.Stubs;
 using NUnit.Framework;
-using TestSharp;
+using System.Xml;
 
 namespace DocsByReflection.UnitTests
 {
@@ -17,11 +18,13 @@ namespace DocsByReflection.UnitTests
         }
 
         [Test]
-        [ExpectedException(typeof(DocsByReflectionException))]
         public void GetXmlFromMember_PropertyWithoutDoc_Null()
         {
-            var propertyInfo = typeof(Stub).GetProperty("PropertyWithoutDoc");
-            DocsService.GetXmlFromMember(propertyInfo);
+            Assert.Throws<DocsByReflectionException>(() =>
+            {
+                var propertyInfo = typeof(Stub).GetProperty("PropertyWithoutDoc");
+                DocsService.GetXmlFromMember(propertyInfo);
+            });
         }
 
         [Test]
@@ -90,7 +93,7 @@ namespace DocsByReflection.UnitTests
         [Test]
         public void GetXmlFromAssembly_Assembly_XmlElement()
         {
-            var actual = DocsService.GetXmlFromAssembly(typeof(Stub).Assembly);
+            var actual = DocsService.GetXmlFromAssembly(typeof(Stub).GetTypeInfo().Assembly);
             StringAssert.EndsWith("DocsByReflection.UnitTests.Stubs", actual.SelectSingleNode("//name").InnerText);
         }
         #endregion
@@ -111,10 +114,8 @@ namespace DocsByReflection.UnitTests
             var method = typeof(Stub).GetMethod("MethodWithoutDoc");
             var parameter = method.GetParameters()[0];
 
-            ExceptionAssert.IsThrowing(new DocsByReflectionException("Could not find documentation for specified element", null), () =>
-            {
-                DocsService.GetXmlFromParameter(parameter);
-            });
+            var ex = Assert.Throws<DocsByReflectionException>(() => DocsService.GetXmlFromParameter(parameter));
+            Assert.AreEqual("Could not find documentation for specified element", ex.Message);           
         }
 
         [Test]

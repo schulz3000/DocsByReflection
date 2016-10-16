@@ -1,0 +1,52 @@
+﻿{
+  "version": "1.0.13-*",
+  "title": "DocsByReflection",
+  "copyright": "Copyright © Diego Giacomelli 2013",
+  "description": "Discover the code documentation at runtime by reflection.",
+  "authors": [ "g1acomell1" ],
+  "packOptions": {
+    "summary": "Discover the code documentation at runtime by reflection.",
+    "owners": [ "g1acomell1" ],
+    "projectUrl": "https://github.com/giacomelli/DocsByReflection",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/giacomelli/DocsByReflection"
+    }
+  },
+
+  "buildOptions": {
+    "keyFile": "DocsByReflection.snk"
+  },
+
+  "frameworks": {
+    "NET35": {
+      "frameworkAssemblies": {
+        "System.Xml": "2.0.0.0"
+      }
+    },
+    "NET40": {
+      "frameworkAssemblies": {
+        "System.Xml": "4.0.0.0"
+      }
+    },
+    "NET45": {
+      "frameworkAssemblies": {
+        "System.Xml": "4.0.0.0"
+      }
+    },
+    "netstandard1.5": {
+      "imports": "dnxcore50",
+      "buildOptions": {
+        "define": [ "COREFX" ]
+      },
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "System.Xml.XmlDocument": "4.0.1",
+        "System.Xml.XPath.XmlDocument": "4.0.1",
+        "System.Reflection": "4.1.0",
+        "System.IO": "4.1.0"
+      }
+    }
+
+  }
+}
