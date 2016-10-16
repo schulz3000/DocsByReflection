@@ -18,8 +18,6 @@ build:
 after_build:
 - cmd: >-
 
-    #dotnet test ./DocsByReflection.UnitTests
-
     mkdir .\src\nuget
 
     dotnet pack .\DocsByReflection --version-suffix=%APPVEYOR_BUILD_NUMBER% --output .\nuget
